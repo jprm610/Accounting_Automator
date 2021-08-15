@@ -10,7 +10,7 @@ def Main() :
 
     parsed_data = [] 
 
-    conversation_path = 'chat3.txt' 
+    conversation_path = 'chat.txt' 
     with open(conversation_path, encoding="utf-8") as fp :
         fp.readline()
         message_buffer = [] 
@@ -19,6 +19,7 @@ def Main() :
             line = fp.readline()
             if not line: 
                 break
+            line = line.replace('p. m.', 'PM').replace('a. m.', 'AM')
             line = line.strip()
             if Start_With_Date_And_Time(line): 
                 if len(message_buffer) > 0: 
@@ -31,7 +32,7 @@ def Main() :
     
     chat = pd.DataFrame(parsed_data, columns=['Date_Time', 'Author', 'Message'])
 
-    chat["Date_Time"] = pd.to_datetime(chat["Date_Time"])
+    chat["Date_Time"] = pd.to_datetime(chat["Date_Time"], dayfirst=True)
     chat['date'] = [d.date() for d in chat['Date_Time']]
     del chat['Date_Time']
 
@@ -56,18 +57,19 @@ def Main() :
                 if word.isnumeric() and int(word) >= 1000 :
                     sum += int(word)
 
-            dates.append(chat.index[i])
-            descriptions.append(message)
-
             if category == 1 :
                 gastos.append(sum)
                 ingresos.append(0)
             elif category == 2 :
                 gastos.append(0)
                 ingresos.append(sum)
-            else :
+            elif category == 3 :
                 gastos.append(0)
                 ingresos.append(0)
+            else : continue
+            
+            dates.append(chat.index[i])
+            descriptions.append(message)
             
     accounty_df = pd.DataFrame()
     accounty_df['Fecha'] = np.array(dates)
@@ -78,7 +80,7 @@ def Main() :
     accounty_df.to_csv(f"Relación Contabilidad {month} {year}.csv")
 
 def Start_With_Date_And_Time(s) :
-    pattern = "^\d{1,2}/\d{1,2}/\d{1,2}, \d{1,2}:\d{1,2}\S [AaPp][Mm] -"
+    pattern = "^\d{1,2}/\d{1,2}/\d{4} \d{1,2}:\d{1,2}\S [AaPp][Mm] -"
     result = re.match(pattern, s)
 
     if result :
@@ -125,3 +127,11 @@ def Ingreso_Gasto(description) :
     else : return 0
 
 Main()
+
+# References:
+
+# Arce, Luis Rafael. (2020). WhatsApp group chat analysis with python. Medium.
+# Link: https://medium.com/mcd-unison/whatsapp-group-chat-analysis-with-python-3f5196280ba
+
+# Sheriff, Samir. (2019). Build your own Whatsapp Chat Analyzer. Towards Data Science.
+# Link: https://towardsdatascience.com/build-your-own-whatsapp-chat-analyzer-9590acca9014
