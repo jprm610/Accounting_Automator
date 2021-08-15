@@ -10,16 +10,16 @@ def Main() :
 
     parsed_data = [] 
 
-    conversation_path = 'chat.txt' 
-    with open(conversation_path, encoding="utf-8") as fp:
-        fp.readline() 
+    conversation_path = 'chat3.txt' 
+    with open(conversation_path, encoding="utf-8") as fp :
+        fp.readline()
         message_buffer = [] 
         date_time, author = None, None
-        while True:
-            line = fp.readline() 
+        while True :
+            line = fp.readline()
             if not line: 
                 break
-            line = line.strip() 
+            line = line.strip()
             if Start_With_Date_And_Time(line): 
                 if len(message_buffer) > 0: 
                     parsed_data.append([date_time, author, ' '.join(message_buffer)]) 
@@ -48,12 +48,12 @@ def Main() :
             category = Ingreso_Gasto(message)
             if category == 0 : continue
 
-            message = message.replace('*', '')
+            message = message.replace('*', '').replace('Grv', 'GRV')
             words = message.split(' ')
 
             sum = 0
             for word in words :
-                if word.isnumeric() :
+                if word.isnumeric() and int(word) >= 1000 :
                     sum += int(word)
 
             dates.append(chat.index[i])
