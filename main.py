@@ -2,16 +2,21 @@ import re
 import regex
 import pandas as pd
 import numpy as np
-import datetime
+import tkinter as tk
+from tkinter import filedialog
 
 def Main() :
     year = int(input('Año: '))
     month = int(input('Mes: '))
+    
+    root = tk.Tk()
+    root.withdraw()
+
+    file_path = filedialog.askopenfilename()
 
     parsed_data = [] 
 
-    conversation_path = 'chat.txt' 
-    with open(conversation_path, encoding="utf-8") as fp :
+    with open(file_path, encoding="utf-8") as fp :
         fp.readline()
         message_buffer = [] 
         date_time, author = None, None
