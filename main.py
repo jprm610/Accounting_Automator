@@ -8,7 +8,7 @@ from tkinter import filedialog
 def Main() :
     year = int(input('Año: '))
     month = int(input('Mes: '))
-    
+
     root = tk.Tk()
     root.withdraw()
 
@@ -49,7 +49,7 @@ def Main() :
     gastos = []
 
     for i in range(len(chat)) :
-        if chat.index[i].year == year and chat.index[i].month :
+        if chat.index[i].year == year and chat.index[i].month == month :
             message = chat['Message'].values[i]
             category = Ingreso_Gasto(message)
             if category == 0 : continue
@@ -83,6 +83,8 @@ def Main() :
     accounty_df['Ingresos'] = np.array(ingresos)
 
     accounty_df.to_csv(f"Relación Contabilidad {month} {year}.csv")
+
+    input('Presiona enter')
 
 def Start_With_Date_And_Time(s) :
     pattern = "^\d{1,2}/\d{1,2}/\d{4} \d{1,2}:\d{1,2}\S [AaPp][Mm] -"
