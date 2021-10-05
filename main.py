@@ -8,6 +8,11 @@ from tkinter import filedialog
 def Main() :
     year = int(input('Año: '))
     month = int(input('Mes: '))
+    is_grv = input('GRV? (y/n): ')
+    if is_grv == 'n' :
+        who = input('Quién?: ')
+    else : 
+        who = 'Relación Contabilidad'
 
     root = tk.Tk()
     root.withdraw()
@@ -16,25 +21,30 @@ def Main() :
 
     parsed_data = [] 
 
-    with open(file_path, encoding="utf-8") as fp :
-        fp.readline()
-        message_buffer = [] 
-        date_time, author = None, None
-        while True :
-            line = fp.readline()
-            if not line: 
-                break
-            line = line.replace('p. m.', 'PM').replace('a. m.', 'AM')
-            line = line.strip()
-            if Start_With_Date_And_Time(line): 
-                if len(message_buffer) > 0: 
-                    parsed_data.append([date_time, author, ' '.join(message_buffer)]) 
-                message_buffer.clear() 
-                date_time, author, message = Get_Data_Point(line) 
-                message_buffer.append(message) 
-            else:
-                message_buffer.append(line)
+    fp = open(file_path, 'r', encoding="utf-8")
+    lines = fp.readlines()
     
+    message_buffer = []
+    for line in lines :
+        line = line.replace('p. m.', 'PM').replace('a. m.', 'AM').replace('a.\xa0m.', 'AM')
+        line = line.strip()
+        if Start_With_Date_And_Time(line) : 
+            if len(message_buffer) > 0 : 
+                parsed_data.append([date_time, author, ' '.join(message_buffer)]) 
+            message_buffer.clear() 
+            date_time, author, message = Get_Data_Point(line) 
+            message_buffer.append(message) 
+        else:
+            message_buffer.append(line)
+
+    chat = pd.DataFrame(parsed_data, columns=['Date_Time', 'Author', 'Message'])
+
+    chat["Date_Time"] = pd.to_datetime(chat["Date_Time"], dayfirst=True)
+    chat['date'] = [d.date() for d in chat['Date_Time']]
+    del chat['Date_Time']
+
+    chat.set_index('date', inplace=True)
+
     chat = pd.DataFrame(parsed_data, columns=['Date_Time', 'Author', 'Message'])
 
     chat["Date_Time"] = pd.to_datetime(chat["Date_Time"], dayfirst=True)
@@ -82,7 +92,7 @@ def Main() :
     accounty_df['Egresos'] = np.array(gastos)
     accounty_df['Ingresos'] = np.array(ingresos)
 
-    accounty_df.to_csv(f"Relación Contabilidad {month} {year}.csv")
+    accounty_df.to_csv(f"{who} {month} {year}.csv")
 
     input('Presiona enter')
 
