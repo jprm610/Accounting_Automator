@@ -4,6 +4,10 @@ import pandas as pd
 import numpy as np
 import tkinter as tk
 from tkinter import filedialog
+import plotly as py
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
+from plotly.graph_objs import *
 
 def Main() :
     year = int(input('Año: '))
@@ -113,6 +117,8 @@ def Main() :
     summary_df.loc[len(summary_df)] = ['Contabilidad', contabilidad]
     summary_df.to_csv(f"Resumen {month} {year}.csv")
 
+    Analysis(accounty_df, saldo_anterior)
+
     input('Presiona enter')
 
 def Start_With_Date_And_Time(s) :
@@ -208,6 +214,82 @@ def Summary_Data(df) :
     nuevo_saldo = saldo_anterior + cuenta_grv
 
     return saldo_anterior, nuevo_saldo, R2_ingresos, jornales, caja_menor, pila, creditos, intereses, r2, prestamos, contabilidad
+
+def Analysis(df, saldo_anterior) :
+    dates = []
+    descr = []
+    values = []
+
+    for i in range(len(df)) :
+        value = 0
+        dates.append(df['Fecha'].values[i])
+        descr.append(df['Descripcion'].values[i])
+        value -= df['Egresos'].values[i]
+        value += df['Ingresos'].values[i]
+        values.append(value)
+
+    condenced_df = pd.DataFrame({
+        'Fecha': np.array(dates),
+        'Descripcion': np.array(descr),
+        'Valor': np.array(values)
+    })
+
+    acum_df = pd.DataFrame({
+        'Fecha': np.array(dates),
+        'Descr': np.array(descr),
+        'Acumulado': np.cumsum(condenced_df['Valor'])
+    })
+    
+    gen = make_subplots(rows=1, cols=1, shared_xaxes=True)
+
+    gen.add_trace(
+        go.Scatter(x=acum_df['Fecha'], y=acum_df['Acumulado'], 
+        line=dict(color='rgba(26,148,49)', width=1),
+        fill='tozeroy'),
+        row=1, col=1
+    )
+
+    gen.update_layout(paper_bgcolor='rgba(0,0,0)', plot_bgcolor='rgba(0,0,0)')
+
+    py.offline.plot(gen, filename = "Evolución_General.html")
+
+    grv_dates = []
+    grv_values = []
+    grv_descr = []
+    for i in range(len(condenced_df)) :
+        message = condenced_df['Descripcion'].values[i]
+        words = message.split(' ')
+        if words[0] == 'Grv' :
+            grv_dates.append(condenced_df['Fecha'].values[i])
+            grv_descr.append(condenced_df['Descripcion'].values[i])
+            grv_values.append(condenced_df['Valor'].values[i])
+
+    grv_df = pd.DataFrame({
+        'Fecha': np.array(grv_dates),
+        'Descr': np.array(grv_descr),
+        'Valor': np.array(grv_values)
+    })
+
+    grv_acum_df = pd.DataFrame({
+        'Fecha': np.array(grv_dates),
+        'Descr': np.array(grv_descr),
+        'Acumulado': np.cumsum(grv_df['Valor'])
+    })
+
+    grv_acum_df['Acumulado'] = grv_acum_df['Acumulado'].apply(lambda x: x + saldo_anterior)
+    
+    grv = make_subplots(rows=1, cols=1, shared_xaxes=True)
+
+    grv.add_trace(
+        go.Scatter(x=grv_acum_df['Fecha'], y=grv_acum_df['Acumulado'], 
+        line=dict(color='rgba(26,148,49)', width=1),
+        fill='tozeroy'),
+        row=1, col=1
+    )
+
+    grv.update_layout(paper_bgcolor='rgba(0,0,0)', plot_bgcolor='rgba(0,0,0)')
+
+    py.offline.plot(grv, filename = "Evolución_GRV.html")
 
 Main()
 
