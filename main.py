@@ -19,6 +19,9 @@ def Main() :
 
     file_path = filedialog.askopenfilename()
 
+    #file_path = 'Chat de WhatsApp con Amorcito.txt'
+
+    # region Chat_df
     parsed_data = [] 
 
     fp = open(file_path, 'r', encoding="utf-8")
@@ -52,7 +55,9 @@ def Main() :
     del chat['Date_Time']
 
     chat.set_index('date', inplace=True)
+    # endregion
 
+    # region Accounty_df
     dates = []
     descriptions = []
     ingresos = []
@@ -91,13 +96,18 @@ def Main() :
     accounty_df['Descripcion'] = np.array(descriptions)
     accounty_df['Egresos'] = np.array(gastos)
     accounty_df['Ingresos'] = np.array(ingresos)
+    # endregion
+
+    saldo_anterior, nuevo_saldo, R2_ingresos = GRV_gastos(accounty_df)
     
-    accounty_df['Descripcion'] = accounty_df['Descripcion'].apply(lambda x: x.capitalize())
-
-    grv = GRV_gastos(accounty_df)
-    print(grv)
-
     accounty_df.to_csv(f"{who} {month} {year}.csv")
+
+    if who == 'Relación Contabilidad' :
+        summary_df = pd.DataFrame(columns=['Concepto', 'Valor'])
+        summary_df.loc[len(summary_df)] = ['Saldo anterior', saldo_anterior]
+        summary_df.loc[len(summary_df)] = ['Nuevo Saldo', nuevo_saldo]
+        summary_df.loc[len(summary_df)] = ['Ingreso GRV por R2', R2_ingresos]
+        summary_df.to_csv(f"Resumen {month} {year}.csv")
 
     input('Presiona enter')
 
@@ -150,13 +160,14 @@ def Ingreso_Gasto(description) :
 
 def GRV_gastos(df) :
 
+    saldo_anterior = int(input('Saldo GRV: '))
     R2_ingresos = int(input('Ingresos GRV por Roble2: '))
 
     cuenta_grv = 0
     for i in range(len(df)) :
         message = df['Descripcion'].values[i]
         words = message.split(' ')
-        if words[0] == 'Grv' :
+        if words[0] == 'Grv' or words[0] == 'grv' :
             if df['Egresos'].values[i] != 0 :
                 cuenta_grv -= df['Egresos'].values[i]
             elif df['Ingresos'].values[i] != 0 :
@@ -164,7 +175,9 @@ def GRV_gastos(df) :
 
     cuenta_grv += R2_ingresos
 
-    return cuenta_grv
+    nuevo_saldo = saldo_anterior + cuenta_grv
+
+    return saldo_anterior, nuevo_saldo, R2_ingresos
 
 Main()
 
