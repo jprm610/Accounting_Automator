@@ -32,7 +32,8 @@ def Main() :
             if len(message_buffer) > 0 : 
                 parsed_data.append([date_time, author, ' '.join(message_buffer)]) 
             message_buffer.clear() 
-            date_time, author, message = Get_Data_Point(line) 
+            date_time, author, message = Get_Data_Point(line)
+            message_buffer.append(message)
         else:
             message_buffer.append(line)
 
@@ -63,7 +64,7 @@ def Main() :
             category = Ingreso_Gasto(message)
             if category == 0 : continue
         
-            message = message.replace('*', '').replace('Grv', 'GRV').replace('grv', 'GRV')
+            message = message.replace('*', '')
             words = message.split(' ')
 
             sum = 0
@@ -90,6 +91,8 @@ def Main() :
     accounty_df['Descripcion'] = np.array(descriptions)
     accounty_df['Egresos'] = np.array(gastos)
     accounty_df['Ingresos'] = np.array(ingresos)
+    
+    accounty_df['Descripcion'] = accounty_df['Descripcion'].apply(lambda x: x.capitalize())
 
     grv = GRV_gastos(accounty_df)
     print(grv)
@@ -153,7 +156,7 @@ def GRV_gastos(df) :
     for i in range(len(df)) :
         message = df['Descripcion'].values[i]
         words = message.split(' ')
-        if words[0] == 'GRV' :
+        if words[0] == 'Grv' :
             if df['Egresos'].values[i] != 0 :
                 cuenta_grv -= df['Egresos'].values[i]
             elif df['Ingresos'].values[i] != 0 :
