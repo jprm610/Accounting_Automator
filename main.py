@@ -95,7 +95,7 @@ def Main() :
     accounty_df['Descripcion'] = accounty_df['Descripcion'].apply(lambda x: x.capitalize())
     # endregion
 
-    saldo_anterior, nuevo_saldo, R2_ingresos, jornales, caja_menor = Summary_Data(accounty_df)
+    saldo_anterior, nuevo_saldo, R2_ingresos, jornales, caja_menor, pila, creditos, intereses = Summary_Data(accounty_df)
     
     accounty_df.to_csv(f"Relación Contabilidad {month} {year}.csv")
 
@@ -105,6 +105,9 @@ def Main() :
     summary_df.loc[len(summary_df)] = ['Ingreso GRV por R2', R2_ingresos]
     summary_df.loc[len(summary_df)] = ['Jornales', jornales]
     summary_df.loc[len(summary_df)] = ['Caja menor', caja_menor]
+    summary_df.loc[len(summary_df)] = ['Pila', pila]
+    summary_df.loc[len(summary_df)] = ['Creditos', creditos]
+    summary_df.loc[len(summary_df)] = ['Intereses', intereses]
     summary_df.to_csv(f"Resumen {month} {year}.csv")
 
     input('Presiona enter')
@@ -164,6 +167,9 @@ def Summary_Data(df) :
     cuenta_grv = 0
     jornales = 0
     caja_menor = 0
+    pila = 0
+    creditos = 0
+    intereses = 0
     for i in range(len(df)) :
         message = df['Descripcion'].values[i]
         words = message.split(' ')
@@ -178,12 +184,18 @@ def Summary_Data(df) :
         elif (words[0] == 'Caja' and
             (words[1] == 'menor' or words[1] == 'Menor')) :
             caja_menor += df['Egresos'].values[i]
+        elif words[0] == 'Pila' :
+            pila += df['Egresos'].values[i]
+        elif words[0] == 'Gri' and words[1] == 'grv' :
+            creditos += df['Egresos'].values[i]
+        elif words[0] == 'Intereses' :
+            intereses += df['Egresos'].values[i]
 
     cuenta_grv += R2_ingresos
 
     nuevo_saldo = saldo_anterior + cuenta_grv
 
-    return saldo_anterior, nuevo_saldo, R2_ingresos, jornales, caja_menor
+    return saldo_anterior, nuevo_saldo, R2_ingresos, jornales, caja_menor, pila, creditos, intereses
 
 Main()
 
