@@ -8,11 +8,6 @@ from tkinter import filedialog
 def Main() :
     year = int(input('Año: '))
     month = int(input('Mes: '))
-    is_grv = input('GRV? (y/n): ')
-    if is_grv == 'n' :
-        who = input('Quién?: ')
-    else : 
-        who = 'Relación Contabilidad'
 
     root = tk.Tk()
     root.withdraw()
@@ -96,18 +91,21 @@ def Main() :
     accounty_df['Descripcion'] = np.array(descriptions)
     accounty_df['Egresos'] = np.array(gastos)
     accounty_df['Ingresos'] = np.array(ingresos)
+
+    accounty_df['Descripcion'] = accounty_df['Descripcion'].apply(lambda x: x.capitalize())
     # endregion
 
-    saldo_anterior, nuevo_saldo, R2_ingresos = GRV_gastos(accounty_df)
+    saldo_anterior, nuevo_saldo, R2_ingresos, jornales, caja_menor = Summary_Data(accounty_df)
     
-    accounty_df.to_csv(f"{who} {month} {year}.csv")
+    accounty_df.to_csv(f"Relación Contabilidad {month} {year}.csv")
 
-    if who == 'Relación Contabilidad' :
-        summary_df = pd.DataFrame(columns=['Concepto', 'Valor'])
-        summary_df.loc[len(summary_df)] = ['Saldo anterior', saldo_anterior]
-        summary_df.loc[len(summary_df)] = ['Nuevo Saldo', nuevo_saldo]
-        summary_df.loc[len(summary_df)] = ['Ingreso GRV por R2', R2_ingresos]
-        summary_df.to_csv(f"Resumen {month} {year}.csv")
+    summary_df = pd.DataFrame(columns=['Concepto', 'Valor'])
+    summary_df.loc[len(summary_df)] = ['Saldo anterior', saldo_anterior]
+    summary_df.loc[len(summary_df)] = ['Nuevo Saldo', nuevo_saldo]
+    summary_df.loc[len(summary_df)] = ['Ingreso GRV por R2', R2_ingresos]
+    summary_df.loc[len(summary_df)] = ['Jornales', jornales]
+    summary_df.loc[len(summary_df)] = ['Caja menor', caja_menor]
+    summary_df.to_csv(f"Resumen {month} {year}.csv")
 
     input('Presiona enter')
 
@@ -158,26 +156,34 @@ def Ingreso_Gasto(description) :
         return 1
     else : return 0
 
-def GRV_gastos(df) :
+def Summary_Data(df) :
 
     saldo_anterior = int(input('Saldo GRV: '))
     R2_ingresos = int(input('Ingresos GRV por Roble2: '))
 
     cuenta_grv = 0
+    jornales = 0
+    caja_menor = 0
     for i in range(len(df)) :
         message = df['Descripcion'].values[i]
         words = message.split(' ')
-        if words[0] == 'Grv' or words[0] == 'grv' :
+        if words[0] == 'Grv' :
             if df['Egresos'].values[i] != 0 :
                 cuenta_grv -= df['Egresos'].values[i]
             elif df['Ingresos'].values[i] != 0 :
                 cuenta_grv += df['Ingresos'].values[i]
+        elif (words[0] == 'Jornales' or 
+            (words[0] == 'R2' and (words[1] == 'Jornales' or words[1] == 'jornales'))) :
+            jornales += df['Egresos'].values[i]
+        elif (words[0] == 'Caja' and
+            (words[1] == 'menor' or words[1] == 'Menor')) :
+            caja_menor += df['Egresos'].values[i]
 
     cuenta_grv += R2_ingresos
 
     nuevo_saldo = saldo_anterior + cuenta_grv
 
-    return saldo_anterior, nuevo_saldo, R2_ingresos
+    return saldo_anterior, nuevo_saldo, R2_ingresos, jornales, caja_menor
 
 Main()
 
