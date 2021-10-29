@@ -95,7 +95,7 @@ def Main() :
     accounty_df['Descripcion'] = accounty_df['Descripcion'].apply(lambda x: x.capitalize())
     # endregion
 
-    saldo_anterior, nuevo_saldo, R2_ingresos, jornales, caja_menor, pila, creditos, intereses = Summary_Data(accounty_df)
+    saldo_anterior, nuevo_saldo, R2_ingresos, jornales, caja_menor, pila, creditos, intereses, r2, prestamos, contabilidad = Summary_Data(accounty_df)
     
     accounty_df.to_csv(f"Relación Contabilidad {month} {year}.csv")
 
@@ -108,6 +108,9 @@ def Main() :
     summary_df.loc[len(summary_df)] = ['Pila', pila]
     summary_df.loc[len(summary_df)] = ['Creditos', creditos]
     summary_df.loc[len(summary_df)] = ['Intereses', intereses]
+    summary_df.loc[len(summary_df)] = ['Roble2', r2]
+    summary_df.loc[len(summary_df)] = ['Prestamos', prestamos]
+    summary_df.loc[len(summary_df)] = ['Contabilidad', contabilidad]
     summary_df.to_csv(f"Resumen {month} {year}.csv")
 
     input('Presiona enter')
@@ -170,6 +173,9 @@ def Summary_Data(df) :
     pila = 0
     creditos = 0
     intereses = 0
+    r2 = 0
+    prestamos = 0
+    contabilidad = 0
     for i in range(len(df)) :
         message = df['Descripcion'].values[i]
         words = message.split(' ')
@@ -181,6 +187,8 @@ def Summary_Data(df) :
         elif (words[0] == 'Jornales' or 
             (words[0] == 'R2' and (words[1] == 'Jornales' or words[1] == 'jornales'))) :
             jornales += df['Egresos'].values[i]
+        elif words[0] == 'R2' :
+            r2 += df['Egresos'].values[i]
         elif (words[0] == 'Caja' and
             (words[1] == 'menor' or words[1] == 'Menor')) :
             caja_menor += df['Egresos'].values[i]
@@ -190,12 +198,16 @@ def Summary_Data(df) :
             creditos += df['Egresos'].values[i]
         elif words[0] == 'Intereses' :
             intereses += df['Egresos'].values[i]
+        elif words[0] == 'Prestamo' or words[0] == 'Préstamo' :
+            prestamos += df['Egresos'].values[i]
+        elif words[0] == 'Contabilidad' :
+            contabilidad += df['Egresos'].values[i]
 
     cuenta_grv += R2_ingresos
 
     nuevo_saldo = saldo_anterior + cuenta_grv
 
-    return saldo_anterior, nuevo_saldo, R2_ingresos, jornales, caja_menor, pila, creditos, intereses
+    return saldo_anterior, nuevo_saldo, R2_ingresos, jornales, caja_menor, pila, creditos, intereses, r2, prestamos, contabilidad
 
 Main()
 
