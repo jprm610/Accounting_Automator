@@ -33,7 +33,6 @@ def Main() :
                 parsed_data.append([date_time, author, ' '.join(message_buffer)]) 
             message_buffer.clear() 
             date_time, author, message = Get_Data_Point(line) 
-            message_buffer.append(message) 
         else:
             message_buffer.append(line)
 
@@ -63,8 +62,8 @@ def Main() :
             message = chat['Message'].values[i]
             category = Ingreso_Gasto(message)
             if category == 0 : continue
-
-            message = message.replace('*', '').replace('Grv', 'GRV')
+        
+            message = message.replace('*', '').replace('Grv', 'GRV').replace('grv', 'GRV')
             words = message.split(' ')
 
             sum = 0
@@ -91,6 +90,9 @@ def Main() :
     accounty_df['Descripcion'] = np.array(descriptions)
     accounty_df['Egresos'] = np.array(gastos)
     accounty_df['Ingresos'] = np.array(ingresos)
+
+    grv = GRV_gastos(accounty_df)
+    print(grv)
 
     accounty_df.to_csv(f"{who} {month} {year}.csv")
 
@@ -142,6 +144,24 @@ def Ingreso_Gasto(description) :
     elif description[:1] == '*' :    # Gasto
         return 1
     else : return 0
+
+def GRV_gastos(df) :
+
+    R2_ingresos = int(input('Ingresos GRV por Roble2: '))
+
+    cuenta_grv = 0
+    for i in range(len(df)) :
+        message = df['Descripcion'].values[i]
+        words = message.split(' ')
+        if words[0] == 'GRV' :
+            if df['Egresos'].values[i] != 0 :
+                cuenta_grv -= df['Egresos'].values[i]
+            elif df['Ingresos'].values[i] != 0 :
+                cuenta_grv += df['Ingresos'].values[i]
+
+    cuenta_grv += R2_ingresos
+
+    return cuenta_grv
 
 Main()
 
