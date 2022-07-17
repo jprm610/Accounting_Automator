@@ -67,8 +67,8 @@ def Main() :
             message = chat['Message'].values[i]
             category = Ingreso_Gasto(message)
             if category == 0 : continue
-        
-            message = message.replace('*', '')
+
+            message = Normalize(message)
             words = message.split(' ')
 
             sum = 0
@@ -96,28 +96,19 @@ def Main() :
     accounty_df['Egresos'] = np.array(gastos)
     accounty_df['Ingresos'] = np.array(ingresos)
 
-    accounty_df['Descripcion'] = accounty_df['Descripcion'].apply(lambda x: x.capitalize())
     # endregion
 
-    saldo_anterior, nuevo_saldo, R2_ingresos, jornales, caja_menor, pila, creditos, intereses, r2, prestamos, contabilidad = Summary_Data(accounty_df)
+    conceptos = Summary_Data(accounty_df)
     
     accounty_df.to_csv(f"Relación Contabilidad {month} {year}.csv")
 
-    summary_df = pd.DataFrame(columns=['Concepto', 'Valor'])
-    summary_df.loc[len(summary_df)] = ['Saldo anterior', saldo_anterior]
-    summary_df.loc[len(summary_df)] = ['Nuevo Saldo', nuevo_saldo]
-    summary_df.loc[len(summary_df)] = ['Ingreso GRV por R2', R2_ingresos]
-    summary_df.loc[len(summary_df)] = ['Jornales', jornales]
-    summary_df.loc[len(summary_df)] = ['Caja menor', caja_menor]
-    summary_df.loc[len(summary_df)] = ['Pila', pila]
-    summary_df.loc[len(summary_df)] = ['Creditos', creditos]
-    summary_df.loc[len(summary_df)] = ['Intereses', intereses]
-    summary_df.loc[len(summary_df)] = ['Roble2', r2]
-    summary_df.loc[len(summary_df)] = ['Prestamos', prestamos]
-    summary_df.loc[len(summary_df)] = ['Contabilidad', contabilidad]
-    summary_df.to_csv(f"Resumen {month} {year}.csv")
+    # region Summary_df
+    summary_df = pd.DataFrame(conceptos.items(), columns=['Concepto', 'Valor'])
 
-    Analysis(accounty_df, saldo_anterior)
+    summary_df.to_csv(f"Resumen {month} {year}.csv")
+    # endregion
+
+    Analysis(accounty_df, conceptos['Saldo anterior GRV'])
 
     input('Presiona enter')
 
@@ -172,48 +163,73 @@ def Summary_Data(df) :
 
     saldo_anterior = int(input('Saldo GRV: '))
     R2_ingresos = int(input('Ingresos GRV por Roble2: '))
+    conceptos = {
+        'Saldo anterior GRV': saldo_anterior,
+        'Ingreso GRV por R2': R2_ingresos,
+        'Nuevo Saldo GRV': 0,
+        'Jornales': 0,
+        'Caja menor': 0,
+        'Pila': 0,
+        'Creditos': 0,
+        'Intereses': 0,
+        'Roble2': 0,
+        'Prestamos': 0,
+        'Contabilidad': 0,
+        'El Corozo': 0,
+        'Casa Palestina': 0
+    }
 
     cuenta_grv = 0
-    jornales = 0
-    caja_menor = 0
-    pila = 0
-    creditos = 0
-    intereses = 0
-    r2 = 0
-    prestamos = 0
-    contabilidad = 0
     for i in range(len(df)) :
         message = df['Descripcion'].values[i]
         words = message.split(' ')
-        if words[0] == 'Grv' :
+        if words[0] == 'GRV' :
             if df['Egresos'].values[i] != 0 :
                 cuenta_grv -= df['Egresos'].values[i]
             elif df['Ingresos'].values[i] != 0 :
                 cuenta_grv += df['Ingresos'].values[i]
-        elif (words[0] == 'Jornales' or 
-            (words[0] == 'R2' and (words[1] == 'Jornales' or words[1] == 'jornales'))) :
-            jornales += df['Egresos'].values[i]
+        elif (words[0] == 'JORNALES' or 
+            (words[0] == 'R2' and words[1] == 'JORNALES')) :
+            conceptos['Jornales'] += df['Egresos'].values[i]
         elif words[0] == 'R2' :
-            r2 += df['Egresos'].values[i]
-        elif (words[0] == 'Caja' and
-            (words[1] == 'menor' or words[1] == 'Menor')) :
-            caja_menor += df['Egresos'].values[i]
-        elif words[0] == 'Pila' :
-            pila += df['Egresos'].values[i]
-        elif words[0] == 'Gri' and words[1] == 'grv' :
-            creditos += df['Egresos'].values[i]
-        elif words[0] == 'Intereses' :
-            intereses += df['Egresos'].values[i]
-        elif words[0] == 'Prestamo' or words[0] == 'Préstamo' :
-            prestamos += df['Egresos'].values[i]
-        elif words[0] == 'Contabilidad' :
-            contabilidad += df['Egresos'].values[i]
+            conceptos['Roble2'] += df['Egresos'].values[i]
+        elif (words[0] == 'CAJA' and words[1] == 'MENOR') :
+            conceptos['Caja menor'] += df['Egresos'].values[i]
+        elif words[0] == 'PILA' :
+            conceptos['Pila'] += df['Egresos'].values[i]
+        elif words[0] == 'CREDITO' :
+            conceptos['Creditos'] += df['Egresos'].values[i]
+        elif words[0] == 'INTERESES' :
+            conceptos['Intereses'] += df['Egresos'].values[i]
+        elif words[0] == 'PRESTAMO' :
+            conceptos['Prestamos'] += df['Egresos'].values[i]
+        elif words[0] == 'CONTABILIDAD' :
+            conceptos['Contabilidad'] += df['Egresos'].values[i]
+        elif words[0] == 'EL' and words[1] == 'COROZO' :
+            conceptos['El Corozo'] += df['Egresos'].values[i]
+        elif words[0] == 'ROSITA' and words[1] == 'PALESTINA' :
+            conceptos['Casa Palestina'] += df['Egresos'].values[i]
 
     cuenta_grv += R2_ingresos
 
-    nuevo_saldo = saldo_anterior + cuenta_grv
+    conceptos['Nuevo Saldo GRV'] = saldo_anterior + cuenta_grv
 
-    return saldo_anterior, nuevo_saldo, R2_ingresos, jornales, caja_menor, pila, creditos, intereses, r2, prestamos, contabilidad
+    return conceptos
+
+def Normalize(s:str) :
+    replacements = (
+        ('*', ''),
+        ("Á", "A"),
+        ("É", "E"),
+        ("Í", "I"),
+        ("Ó", "O"),
+        ("Ú", "U"),
+    )
+    s = s.upper()
+    for a, b in replacements:
+        s = s.replace(a, b).replace(a.upper(), b.upper())
+    
+    return s
 
 def Analysis(df, saldo_anterior) :
     dates = []
