@@ -16,9 +16,9 @@ def Main() :
     root = tk.Tk()
     root.withdraw()
 
-    file_path = filedialog.askopenfilename()
+    #file_path = filedialog.askopenfilename()
 
-    #file_path = 'Chat de WhatsApp con Amorcito.txt'
+    file_path = 'Chat de WhatsApp con Amorcito.txt'
 
     # region Chat_df
     parsed_data = [] 
@@ -28,7 +28,8 @@ def Main() :
     
     message_buffer = []
     for line in lines :
-        line = line.replace('p. m.', 'PM').replace('a. m.', 'AM').replace('a.\xa0m.', 'AM')
+        line = line.replace('\u202f', ' ')
+        line = line.replace('p. m.', 'PM').replace('a. m.', 'AM')
         line = line.strip()
         if Start_With_Date_And_Time(line) : 
             if len(message_buffer) > 0 : 
@@ -113,7 +114,7 @@ def Main() :
     input('Presiona enter')
 
 def Start_With_Date_And_Time(s) :
-    pattern = "^\d{1,2}/\d{1,2}/\d{4} \d{1,2}:\d{1,2}\S [AaPp][Mm] -"
+    pattern = "^\d{1,2}/\d{1,2}/\d{4}, \d{1,2}:\d{1,2}\S [AaPp][Mm] -"
     result = re.match(pattern, s)
 
     if result :
