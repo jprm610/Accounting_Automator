@@ -18,7 +18,7 @@ def Main() :
 
     #file_path = filedialog.askopenfilename()
 
-    file_path = 'Chat de WhatsApp con Amorcito.txt'
+    file_path = 'Chat de WhatsApp con +57 314 7711497.txt'
 
     # region Chat_df
     parsed_data = [] 
@@ -114,7 +114,7 @@ def Main() :
     input('Presiona enter')
 
 def Start_With_Date_And_Time(s) :
-    pattern = "^\d{1,2}/\d{1,2}/\d{4}, \d{1,2}:\d{1,2}\S [AaPp][Mm] -"
+    pattern = "^\d{1,2}/\d{1,2}/\d{2,4}, \d{1,2}:\d{1,2}\S [AaPp][Mm] -"
     result = re.match(pattern, s)
 
     if result :
