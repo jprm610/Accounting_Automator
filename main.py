@@ -19,6 +19,7 @@ def Main() :
     #file_path = filedialog.askopenfilename()
 
     file_path = 'Chat de WhatsApp con +57 314 7711497.txt'
+    #file_path = 'WhatsApp Chat with +57 321 5838597 (1).txt'
 
     # region Chat_df
     parsed_data = [] 
@@ -72,17 +73,14 @@ def Main() :
             message = Normalize(message)
             words = message.split(' ')
 
-            sum = 0
-            for word in words :
-                if word.isnumeric() and int(word) >= 1000 :
-                    sum += int(word)
+            s = sum([word for word in words if word.isnumeric()])
 
             if category == 1 :
-                gastos.append(sum)
+                gastos.append(s)
                 ingresos.append(0)
             elif category == 2 :
                 gastos.append(0)
-                ingresos.append(sum)
+                ingresos.append(s)
             elif category == 3 :
                 gastos.append(0)
                 ingresos.append(0)
