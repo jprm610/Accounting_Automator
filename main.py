@@ -73,7 +73,7 @@ def Main() :
             message = Normalize(message)
             words = message.split(' ')
 
-            s = sum([word for word in words if word.isnumeric()])
+            s = sum([int(word) for word in words if word.isnumeric() and int(word) >= 10000])
 
             if category == 1 :
                 gastos.append(s)
@@ -227,7 +227,8 @@ def Normalize(s:str) :
     s = s.upper()
     for a, b in replacements:
         s = s.replace(a, b).replace(a.upper(), b.upper())
-    
+    s = s.replace("<SE EDITO ESTE MENSAJE.>", '')
+
     return s
 
 def Analysis(df, saldo_anterior) :
