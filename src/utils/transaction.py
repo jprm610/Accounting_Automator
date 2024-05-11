@@ -1,5 +1,5 @@
 class Transaction :
-    def __init__(self, date, message:str) :
+    def __init__(self, date, message:str) -> None :
         self.date = date
         self.sender = None
         self.recipient = None
@@ -8,13 +8,15 @@ class Transaction :
         self.amount = None
         self.messageToTransaction(message)
 
-    def messageToTransaction(self, message:str) :
+        return
+
+    def messageToTransaction(self, message:str) -> None :
         import re
 
         message = message.split(' ')
         self.sender = message[0]
         self.recipient = message[1]
-        self.debt = '-'
+        self.debt = '.'
         start_index_description = 2
         match = re.search(r'\((\w+)\)', message[2])
         if match:
@@ -23,7 +25,9 @@ class Transaction :
         self.description = ' '.join(message[start_index_description:])
         self.amount = Transaction.getAmount(self.description)
 
-    def getTransaction(self) :
+        return
+
+    def getTransaction(self) -> dict :
         return {
             'date': self.date,
             'sender': self.sender,
@@ -34,5 +38,5 @@ class Transaction :
         }
 
     @classmethod
-    def getAmount(cls, description:str) :
+    def getAmount(cls, description:str) -> int :
         return sum([int(x) for x in description.split() if x.isnumeric()])

@@ -1,13 +1,15 @@
 import pandas as pd
-from src.transaction import Transaction
+from src.utils.transaction import Transaction
 
 class Transactions :
-    def __init__(self, chat_df: pd.DataFrame, year: int, month: int) -> None:
+    def __init__(self, chat_df: pd.DataFrame, year: int, month: int) -> None :
         self.year = year
         self.month = month
         self.chat_df = chat_df
         self.chat_df = self.filterChat(chat_df=self.chat_df, year=self.year, month=self.month)
         self.transactions = self.convertToTransactionsFormat(chat_df=self.chat_df)
+
+        return
 
     def getTransactions(self) -> pd.DataFrame:
         return self.transactions
@@ -32,7 +34,7 @@ class Transactions :
         return transactions
     
     @classmethod
-    def normalize(cls, s:str) :
+    def normalize(cls, s:str) -> str :
         replacements = (
             ('*', ''),
             ("Á", "A"),
@@ -41,6 +43,7 @@ class Transactions :
             ("Ó", "O"),
             ("Ú", "U"),
         )
+        s = s.strip()
         s = s.upper()
         for a, b in replacements:
             s = s.replace(a, b).replace(a.upper(), b.upper())

@@ -2,9 +2,11 @@ from pathlib import Path
 import pandas as pd
 
 class Chat :
-    def __init__(self, chatPath: Path) -> None:
+    def __init__(self, chatPath: Path) -> None :
         self.chatPath = chatPath
         self.df = self.create_df(self.chatPath)
+
+        return
 
     def create_df(self, chatPath: Path) -> pd.DataFrame:
         parsed_data = [] 
@@ -48,7 +50,7 @@ class Chat :
         return self.df
     
     @classmethod
-    def Start_With_Date_And_Time(cls, s) :
+    def Start_With_Date_And_Time(cls, s) -> bool :
         import re
 
         pattern = "^\d{1,2}/\d{1,2}/\d{2,4}, \d{1,2}:\d{1,2}\S [AaPp][Mm] -"
@@ -60,7 +62,7 @@ class Chat :
         return False
     
     @classmethod
-    def Get_Data_Point(cls, line) :
+    def Get_Data_Point(cls, line) -> tuple :
         split_line = line.split(' - ') 
         date_time = split_line[0]
         message = ' '.join(split_line[1:])
@@ -73,7 +75,7 @@ class Chat :
         return date_time, author, message
 
     @classmethod
-    def Find_Author(cls, s) :
+    def Find_Author(cls, s) -> bool :
         import re
 
         patterns = [
