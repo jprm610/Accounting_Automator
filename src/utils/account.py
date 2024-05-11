@@ -1,5 +1,6 @@
 import pandas as pd
 from pathlib import Path
+from parameters import Parameters
 
 class Account :
     ACCOUNT_NAMES = ['R2', 'ROS', 'VAL', 'R2GRV', 'GRV', 'EF', 'OLG', 'R2CG']
@@ -38,11 +39,11 @@ class Account :
     def exportAccount(self) -> None :
         if len(self.transactions) > 0 :
             print(f'Se exportó {self.name}.')
-            self.transactions.to_csv(Account.EXPORT_PATH / f'{self.name}.csv', index=False)
+            self.transactions.to_csv(Account.EXPORT_PATH / f'{self.name} {Parameters.YEAR} {Parameters.MONTH}.csv', index=False)
 
         if len(self.debt) > 0 :
             print(f'Se exportó {self.name} (Deudas).')
-            self.debt.to_csv(Account.EXPORT_PATH / f'{self.name} Deudas.csv', index=False)
+            self.debt.to_csv(Account.EXPORT_PATH / f'{self.name} {Parameters.YEAR} {Parameters.MONTH} Deudas.csv', index=False)
         return
     
     @classmethod
