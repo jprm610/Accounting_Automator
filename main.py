@@ -23,7 +23,6 @@ def main() -> None :
     
     # Generate the accounts
     Account.TRANSACTIONS = transactions_df
-    Account.EXPORT_PATH = Parameters.EXPORT_PATH
     Account.main()
     
     return

@@ -30,7 +30,7 @@ class Transactions :
     def convertToTransactionsFormat(self, chat_df: pd.DataFrame) -> pd.DataFrame:
         transactions = [Transaction(date, message).getTransaction() for date, message in zip(chat_df.index, chat_df['Message'])]
         transactions = pd.DataFrame(transactions)
-        transactions.set_index('date', inplace=True)
+        #transactions.set_index('date', inplace=True)
         return transactions
     
     @classmethod
