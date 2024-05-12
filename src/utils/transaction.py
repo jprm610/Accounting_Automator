@@ -29,12 +29,12 @@ class Transaction :
 
     def getTransaction(self) -> dict :
         return {
-            'date': self.date,
-            'sender': self.sender,
-            'recipient': self.recipient,
-            'debt': self.debt,
-            'description': self.description,
-            'amount': self.amount
+            'FECHA': self.date,
+            'ORIGEN': self.sender,
+            'DESTINO': self.recipient,
+            'LE DEBE': self.debt,
+            'DESCRIPCION': self.description,
+            'VALOR': self.amount
         }
 
     @classmethod

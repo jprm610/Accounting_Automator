@@ -20,6 +20,7 @@ def main() -> None :
     # Get transactions dataframe
     transactions = Transactions(chat_df=chat_df, year=Parameters.YEAR, month=Parameters.MONTH)
     transactions_df = transactions.getTransactions()
+    transactions_df.to_csv(Parameters.EXPORT_PATH / 'transactions.csv', index=False)
     
     # Generate the accounts
     Account.TRANSACTIONS = transactions_df

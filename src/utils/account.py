@@ -23,16 +23,16 @@ class Account :
         return
     
     def filterTransactions(self, transactions_df: pd.DataFrame) -> pd.DataFrame :
-        account_transactions = transactions_df[(transactions_df['sender'] == self.name) | 
-                                               (transactions_df['recipient'] == self.name)]
+        account_transactions = transactions_df[(transactions_df['ORIGEN'] == self.name) | 
+                                               (transactions_df['DESTINO'] == self.name)]
         return account_transactions
     
     def filterAmounts(self, account_transactions: pd.DataFrame) -> pd.DataFrame :
-        account_transactions['amount'] = account_transactions.apply(lambda x: x['amount'] if x['recipient'] == self.name else -x['amount'], axis=1)
+        account_transactions['VALOR'] = account_transactions.apply(lambda x: x['VALOR'] if x['DESTINO'] == self.name else -x['VALOR'], axis=1)
         return account_transactions
     
     def filterDebt(self, transactions_df: pd.DataFrame) -> pd.DataFrame :
-        debt = transactions_df[transactions_df['debt'] == self.name]
+        debt = transactions_df[transactions_df['LE DEBE'] == self.name]
         return debt
     
     def exportAccount(self) -> None :
@@ -44,7 +44,7 @@ class Account :
             print(f'Se exportó {self.name} (Deudas).')
             self.debt.to_csv(Parameters.EXPORT_PATH / f'{self.name} {Parameters.YEAR} {Parameters.MONTH} Deudas.csv', index=False)
         return
-    
+
     @classmethod
     def main(cls) -> None :
         for name in Account.ACCOUNT_NAMES : 
