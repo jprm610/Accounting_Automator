@@ -11,7 +11,5 @@ class Setup :
         except :
             pass
 
-        print('Everything is ready! Run the main.py file to start the process.')
-
         return
         
