@@ -32,7 +32,7 @@ class Transaction :
             'FECHA': self.date,
             'ORIGEN': self.sender,
             'DESTINO': self.recipient,
-            'LE DEBE': self.debt,
+            'DEUDOR': self.debt,
             'DESCRIPCION': self.description,
             'VALOR': self.amount
         }

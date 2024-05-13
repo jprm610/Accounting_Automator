@@ -13,7 +13,7 @@ def main() -> None :
     print('Configuración inicial...')
     Setup.main(first_run=Parameters.FIRST_RUN)
 
-    print('Elija el año y el mes a generear las cuentas.')
+    print('Elija el año y el mes para generar las cuentas.')
     Parameters.YEAR = int(input('Año (YYYY): '))
     Parameters.MONTH = int(input('Mes (m): '))
 

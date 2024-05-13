@@ -5,6 +5,8 @@ from parameters import Parameters
 class Account :
     ACCOUNT_NAMES = ['R2', 'ROS', 'VAL', 'R2GRV', 'GRV', 'EF', 'OLG']
     TRANSACTIONS = None
+    DEBTS_DF = None
+    DEBTS = {}
     def __init__(self, name:str) -> None:
         self.name = name
         self.transactions = None
@@ -19,7 +21,6 @@ class Account :
         self.transactions = self.filterTransactions(Account.TRANSACTIONS)
         self.transactions = self.filterAmounts(self.transactions)
 
-        self.debt = self.filterDebt(Account.TRANSACTIONS)
         return
     
     def filterTransactions(self, transactions_df: pd.DataFrame) -> pd.DataFrame :
@@ -31,27 +32,40 @@ class Account :
         account_transactions['VALOR'] = account_transactions.apply(lambda x: x['VALOR'] if x['DESTINO'] == self.name else -x['VALOR'], axis=1)
         return account_transactions
     
-    def filterDebt(self, transactions_df: pd.DataFrame) -> pd.DataFrame :
-        debt = transactions_df[transactions_df['LE DEBE'] == self.name]
-        return debt
-    
     def exportAccount(self) -> None :
         if len(self.transactions) > 0 :
-            print(f'Se exportó {self.name}.')
             self.transactions.to_csv(Parameters.EXPORT_PATH / f'{self.name} {Parameters.YEAR} {Parameters.MONTH}.csv', index=False)
-
-        if len(self.debt) > 0 :
-            print(f'Se exportó {self.name} (Deudas).')
-            self.debt.to_csv(Parameters.EXPORT_PATH / f'{self.name} {Parameters.YEAR} {Parameters.MONTH} Deudas.csv', index=False)
+            print(f'Se exportó {self.name}.')
+        
         return
 
     @classmethod
     def main(cls) -> None :
         for name in Account.ACCOUNT_NAMES : 
             Account(name).exportAccount()
+
+        Account.generateDebtDf(Account.TRANSACTIONS)
+
         return
     
     @classmethod
     def printAccounts(cls) -> None :
         print('Cuentas a generar:', Account.ACCOUNT_NAMES)
+        return
+    
+    @classmethod
+    def generateDebtDf(cls, transactions_df: pd.DataFrame) -> None :
+        Account.DEBTS_DF = transactions_df[transactions_df['DEUDOR'] != '.']
+        for index, row in Account.DEBTS_DF.iterrows() :
+            debt = f"{row['DEUDOR']} -> {row['ORIGEN']}"
+            if debt not in Account.DEBTS.keys() :
+                Account.DEBTS[debt] = row['VALOR']
+            else :
+                Account.DEBTS[debt] += row['VALOR']
+        settle_debts = pd.DataFrame(Account.DEBTS.items(), columns=['DEUDA', 'VALOR'])
+        settle_debts.to_csv(Parameters.EXPORT_PATH / 'Cruce cuentas.csv', index=False)
+        Account.DEBTS_DF.to_csv(Parameters.EXPORT_PATH / 'Deudas.csv', index=False)
+
+        print('Se exportó la deuda.')
+
         return
