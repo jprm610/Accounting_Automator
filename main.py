@@ -23,6 +23,13 @@ def main() -> None :
     transactions_df.to_csv(Parameters.EXPORT_PATH / 'transactions.csv', index=False)
     
     # Generate the accounts
+    Account.printAccounts()
+    generate_more_accounts = input('Agregar más cuentas? (S/N): ')
+    if generate_more_accounts in 'sS' :
+        new_accounts = input('Nombres de cuentas separados por un espacio: ').split()
+        Account.ACCOUNT_NAMES.extend([Transactions.normalize(account) for account in new_accounts])
+        Account.printAccounts()       
+
     Account.TRANSACTIONS = transactions_df
     Account.main()
     

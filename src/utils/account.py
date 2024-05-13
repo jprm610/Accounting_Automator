@@ -3,7 +3,7 @@ from pathlib import Path
 from parameters import Parameters
 
 class Account :
-    ACCOUNT_NAMES = ['R2', 'ROS', 'VAL', 'R2GRV', 'GRV', 'EF', 'OLG', 'R2CG']
+    ACCOUNT_NAMES = ['R2', 'ROS', 'VAL', 'R2GRV', 'GRV', 'EF', 'OLG']
     TRANSACTIONS = None
     def __init__(self, name:str) -> None:
         self.name = name
@@ -49,4 +49,9 @@ class Account :
     def main(cls) -> None :
         for name in Account.ACCOUNT_NAMES : 
             Account(name).exportAccount()
+        return
+    
+    @classmethod
+    def printAccounts(cls) -> None :
+        print('Cuentas a generar:', Account.ACCOUNT_NAMES)
         return
