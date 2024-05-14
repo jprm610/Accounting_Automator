@@ -43,10 +43,10 @@ class Transactions :
             ("Ó", "O"),
             ("Ú", "U"),
         )
-        s = s.strip()
         s = s.upper()
         for a, b in replacements:
             s = s.replace(a, b).replace(a.upper(), b.upper())
         s = s.replace("<SE EDITO ESTE MENSAJE.>", '')
+        s = s.strip()
 
         return s

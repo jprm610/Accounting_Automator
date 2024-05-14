@@ -30,12 +30,7 @@ def main() -> None :
     
     # Generate the accounts
     print('Generando cuentas...')
-    Account.printAccounts()
-    generate_more_accounts = input('Agregar más cuentas? (S/N): ')
-    if generate_more_accounts in 'sS' :
-        new_accounts = input('Nombres de cuentas separados por un espacio: ').split()
-        Account.ACCOUNT_NAMES.extend([Transactions.normalize(account) for account in new_accounts])
-        Account.printAccounts()       
+    Account.printAccounts() 
 
     Account.TRANSACTIONS = transactions_df
     Account.main()

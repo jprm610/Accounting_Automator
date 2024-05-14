@@ -1,9 +1,11 @@
+from src.utils.account import Account
+
 class Transaction :
     def __init__(self, date, message:str) -> None :
         self.date = date
         self.sender = None
         self.recipient = None
-        self.debt = None
+        self.debtor = None
         self.description = None
         self.amount = None
         self.messageToTransaction(message)
@@ -16,14 +18,18 @@ class Transaction :
         message = message.split(' ')
         self.sender = message[0]
         self.recipient = message[1]
-        self.debt = '.'
+        self.debtor = '.'
         start_index_description = 2
         match = re.search(r'\((\w+)\)', message[2])
         if match:
-            self.debt = match.group(1)
+            self.debtor = match.group(1)
             start_index_description = 3
         self.description = ' '.join(message[start_index_description:])
         self.amount = Transaction.getAmount(self.description)
+
+        Account.addAccount(self.sender)
+        Account.addAccount(self.recipient)
+        Account.addAccount(self.debtor)
 
         return
 
@@ -32,7 +38,7 @@ class Transaction :
             'FECHA': self.date,
             'ORIGEN': self.sender,
             'DESTINO': self.recipient,
-            'DEUDOR': self.debt,
+            'DEUDOR': self.debtor,
             'DESCRIPCION': self.description,
             'VALOR': self.amount
         }

@@ -3,7 +3,7 @@ from pathlib import Path
 from parameters import Parameters
 
 class Account :
-    ACCOUNT_NAMES = ['R2', 'ROS', 'VAL', 'R2GRV', 'GRV', 'EF', 'OLG']
+    ACCOUNT_NAMES = set()
     TRANSACTIONS = None
     DEBTS_DF = None
     DEBTS = {}
@@ -68,4 +68,10 @@ class Account :
 
         print('Se exportó la deuda.')
 
+        return
+    
+    @classmethod
+    def addAccount(cls, new_account:str) -> None :
+        if new_account in ['CRUCE', '.'] : return
+        Account.ACCOUNT_NAMES.add(new_account)
         return
