@@ -4,6 +4,7 @@ warnings.filterwarnings('ignore')
 from src.utils.chat import Chat
 from src.utils.transactions import Transactions
 from src.utils.account import Account
+from src.utils.debt import Debt
 from src.setup import Setup
 from parameters import Parameters
 
@@ -36,9 +37,13 @@ def main() -> None :
         new_accounts = input('Nombres de cuentas separados por un espacio: ').split()
         Account.ACCOUNT_NAMES.extend([Transactions.normalize(account) for account in new_accounts])
         Account.printAccounts()       
-
     Account.TRANSACTIONS = transactions_df
     Account.main()
+
+    # Generate the debts
+    print('Generando deudas...')
+    Debt.generateDebtsDf(Account.TRANSACTIONS)
+    Debt.main()
 
     print('Proceso finalizado con exito.')
     

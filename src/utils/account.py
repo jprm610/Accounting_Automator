@@ -1,6 +1,7 @@
 import pandas as pd
 from pathlib import Path
 from parameters import Parameters
+from src.utils.debt import Debt
 
 class Account :
     ACCOUNT_NAMES = ['R2', 'ROS', 'VAL', 'R2GRV', 'GRV', 'EF', 'OLG']
@@ -44,28 +45,9 @@ class Account :
         for name in Account.ACCOUNT_NAMES : 
             Account(name).exportAccount()
 
-        Account.generateDebtDf(Account.TRANSACTIONS)
-
         return
     
     @classmethod
     def printAccounts(cls) -> None :
         print('Cuentas a generar:', Account.ACCOUNT_NAMES)
-        return
-    
-    @classmethod
-    def generateDebtDf(cls, transactions_df: pd.DataFrame) -> None :
-        Account.DEBTS_DF = transactions_df[transactions_df['DEUDOR'] != '.']
-        for index, row in Account.DEBTS_DF.iterrows() :
-            debt = f"{row['DEUDOR']} -> {row['ORIGEN']}"
-            if debt not in Account.DEBTS.keys() :
-                Account.DEBTS[debt] = row['VALOR']
-            else :
-                Account.DEBTS[debt] += row['VALOR']
-        settle_debts = pd.DataFrame(Account.DEBTS.items(), columns=['DEUDA', 'VALOR'])
-        settle_debts.to_csv(Parameters.EXPORT_PATH / 'Cruce cuentas.csv', index=False)
-        Account.DEBTS_DF.to_csv(Parameters.EXPORT_PATH / 'Deudas.csv', index=False)
-
-        print('Se exportó la deuda.')
-
         return
