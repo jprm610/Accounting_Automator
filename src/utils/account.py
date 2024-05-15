@@ -1,6 +1,7 @@
 import pandas as pd
 from pathlib import Path
 from parameters import Parameters
+from src.utils.debt import Debt
 
 class Account :
     ACCOUNT_NAMES = set()
@@ -43,8 +44,6 @@ class Account :
     def main(cls) -> None :
         for name in Account.ACCOUNT_NAMES : 
             Account(name).exportAccount()
-
-        Account.generateDebtDf(Account.TRANSACTIONS)
 
         return
     
