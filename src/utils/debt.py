@@ -9,6 +9,7 @@ class Debt :
         self.acreedor = acreedor
         self.valor = valor
         Debt.DEBTS.append(self)
+        self.normalize()
 
         return
     
@@ -18,15 +19,25 @@ class Debt :
 
         return
     
+    def normalize(self) -> None :
+        if self.valor == 0 :
+            Debt.DEBTS.remove(self)
+            return
+
+        if self.valor < 0 :
+            self.invert()
+        
+        return
+    
     def add(self, amount) -> None :
         self.valor += amount
+        self.normalize()
 
         return
     
     def substract(self, amount) -> None :
         self.valor -= amount
-        if self.valor < 0 :
-            self.invert()
+        self.normalize()
 
         return
     
@@ -36,6 +47,7 @@ class Debt :
     @classmethod
     def main(cls) :
         Debt.generateDebts()
+        Debt.simplifyDebt()
         Debt.export()
 
         return
@@ -61,7 +73,7 @@ class Debt :
             if row['DEUDOR'] == 'CRUCE' :
                 debt = Debt.debtExists(row['DESTINO'], row['ORIGEN'])
                 if debt != None :
-                    debt.substract(row['VALOR'])
+                    debt.add(row['VALOR'])
                 else :
                     Debt(row['DESTINO'], row['ORIGEN'], row['VALOR'])
             else :
@@ -70,6 +82,16 @@ class Debt :
                     debt.add(row['VALOR'])
                 else :
                     Debt(row['DEUDOR'], row['ORIGEN'], row['VALOR'])
+        
+        return
+    
+    @classmethod
+    def simplifyDebt(cls) :
+        for debt in Debt.DEBTS :
+            debt_inverted = Debt.debtExists(debt.acreedor, debt.deudor)
+            if debt_inverted != None :
+                debt.substract(debt_inverted.valor)
+                Debt.DEBTS.remove(debt_inverted)
         
         return
     
