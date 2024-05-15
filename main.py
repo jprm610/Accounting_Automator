@@ -33,12 +33,12 @@ def main() -> None :
     print('Generando cuentas...')
     Account.printAccounts() 
 
-    Account.TRANSACTIONS = transactions_df
+    Account.GLOBAL_TRANSACTIONS = transactions_df
     Account.main()
 
     # Generate the debts
     print('Generando deudas...')
-    Debt.generateDebtsDf(Account.TRANSACTIONS)
+    Debt.generateDebtsDf(Account.GLOBAL_TRANSACTIONS)
     Debt.main()
 
     print('Proceso finalizado con exito.')
