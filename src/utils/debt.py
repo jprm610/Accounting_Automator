@@ -4,7 +4,7 @@ from parameters import Parameters
 class Debt :
     DEBTS_DF = None
     DEBTS = []
-    def __init__(self, deudor, acreedor, valor) -> None :
+    def __init__(self, deudor: str, acreedor: str, valor: int) -> None :
         self.deudor = deudor
         self.acreedor = acreedor
         self.valor = valor
@@ -46,6 +46,7 @@ class Debt :
     
     @classmethod
     def main(cls) :
+        Debt.addDebts()
         Debt.generateDebts()
         Debt.simplifyDebt()
         Debt.export()
@@ -105,3 +106,16 @@ class Debt :
         print('Se exportó la deuda.')
 
         return
+    
+    @classmethod
+    def addDebts(cls) :
+        add_debts = input('Quiere agregar deudas? (s/n): ')
+        if add_debts in 'sS' :
+            while True :
+                print('Agregue una deuda o 0 para terminar.')
+                deudor = input('Deudor: ')
+                if deudor == '0' :
+                    break
+                acreedor = input('Acreedor: ')
+                valor = int(input('Valor: '))
+                Debt(deudor, acreedor, valor)
