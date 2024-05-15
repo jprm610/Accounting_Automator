@@ -20,8 +20,8 @@ def main() -> None :
 
     # Get chat dataframe
     print('Cargando chat...')
-    chat = Chat(chatPath=Parameters.CHAT_PATH)
-    chat_df = chat.get_df()
+    chat = Chat(chat_path=Parameters.CHAT_PATH)
+    chat_df = chat.getChat_df()
 
     # Get transactions dataframe
     print('Generando transacciones...')
@@ -32,7 +32,6 @@ def main() -> None :
     # Generate the accounts
     print('Generando cuentas...')
     Account.printAccounts() 
-
     Account.GLOBAL_TRANSACTIONS = transactions_df
     Account.main()
 

@@ -2,16 +2,25 @@ from pathlib import Path
 import pandas as pd
 
 class Chat :
-    def __init__(self, chatPath: Path) -> None :
-        self.chatPath = chatPath
-        self.df = self.create_df(self.chatPath)
+    def __init__(self, chat_path: Path) -> None :
+        """
+        @chat_path: Path to the chat file in txt format. \\
+        Create a chat object and set the chat dataframe.
+        """
+
+        self.chat_df = self.create_df(chat_path=chat_path)
 
         return
 
-    def create_df(self, chatPath: Path) -> pd.DataFrame:
+    def create_df(self, chat_path: Path) -> pd.DataFrame:
+        """
+        @chat_path: Path to the chat file in txt format. \\
+        Returns a dataframe with the chat data.
+        """
+
         parsed_data = [] 
 
-        fp = open(chatPath, 'r', encoding="utf-8")
+        fp = open(chat_path, 'r', encoding="utf-8")
         lines = fp.readlines()
         
         message_buffer = []
@@ -46,11 +55,20 @@ class Chat :
 
         return chat
     
-    def get_df(self) -> pd.DataFrame:
-        return self.df
+    def getChat_df(self) -> pd.DataFrame:
+        """
+        Returns the chat dataframe.
+        """
+
+        return self.chat_df
     
     @classmethod
     def Start_With_Date_And_Time(cls, s) -> bool :
+        """
+        @s: String to check if it starts with a date and time. \\
+        Returns True if the string starts with a date and time, False otherwise.
+        """
+
         import re
 
         pattern = "^\d{1,2}/\d{1,2}/\d{2,4}, \d{1,2}:\d{1,2}\S [AaPp][Mm] -"
@@ -63,6 +81,11 @@ class Chat :
     
     @classmethod
     def Get_Data_Point(cls, line) -> tuple :
+        """
+        @line: Line of the chat. \\
+        Returns a tuple with the date and time, author and message.
+        """
+
         split_line = line.split(' - ') 
         date_time = split_line[0]
         message = ' '.join(split_line[1:])
@@ -76,6 +99,11 @@ class Chat :
 
     @classmethod
     def Find_Author(cls, s) -> bool :
+        """
+        @s: String to check if it contains an author. \\
+        Returns True if the string contains an author, False otherwise.
+        """
+
         import re
 
         patterns = [
