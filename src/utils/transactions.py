@@ -3,6 +3,13 @@ from src.utils.transaction import Transaction
 
 class Transactions :
     def __init__(self, chat_df: pd.DataFrame, year: int, month: int) -> None :
+        """
+        @chat_df: Chat dataframe. \\
+        @year: Year to filter the transactions. \\
+        @month: Month to filter the transactions. \\
+        Create a transactions object and set the transactions dataframe.
+        """
+
         self.year = year
         self.month = month
         self.chat_df = chat_df
@@ -12,9 +19,20 @@ class Transactions :
         return
 
     def getTransactions(self) -> pd.DataFrame:
+        """
+        Returns the transactions dataframe.
+        """
+
         return self.transactions
 
     def filterChat(self, chat_df: pd.DataFrame, year: int, month: int) -> pd.DataFrame:
+        """
+        @chat_df: Chat dataframe. \\
+        @year: Year to filter the transactions. \\
+        @month: Month to filter the transactions. \\
+        Returns the chat dataframe with the transactions filtered by year and month.
+        """
+
         # Convert index to datetime
         chat_df.index = pd.to_datetime(chat_df.index)
         
@@ -28,6 +46,11 @@ class Transactions :
         return chat_df
     
     def convertToTransactionsFormat(self, chat_df: pd.DataFrame) -> pd.DataFrame:
+        """
+        @chat_df: Chat dataframe. \\
+        Returns the transactions dataframe in transactions format.
+        """
+
         transactions = [Transaction(date, message).getTransaction() for date, message in zip(chat_df.index, chat_df['Message'])]
         transactions = pd.DataFrame(transactions)
         #transactions.set_index('date', inplace=True)
@@ -35,6 +58,11 @@ class Transactions :
     
     @classmethod
     def normalize(cls, s:str) -> str :
+        """
+        @s: String to normalize. \\
+        Returns the normalized string.
+        """
+
         replacements = (
             ('*', ''),
             ("Á", "A"),
