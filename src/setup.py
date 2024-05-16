@@ -1,4 +1,5 @@
 import os
+from parameters import Parameters
 
 class Setup :
     @classmethod
@@ -7,7 +8,7 @@ class Setup :
             os.system("pip install -r requirements.txt")
 
         try :
-            os.mkdir('data')
+            os.mkdir(Parameters.EXPORT_PATH)
         except :
             pass
 

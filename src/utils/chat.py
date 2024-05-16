@@ -20,7 +20,11 @@ class Chat :
 
         parsed_data = [] 
 
-        fp = open(chat_path, 'r', encoding="utf-8")
+        try :
+            fp = open(chat_path, 'r', encoding="utf-8")
+        except :
+            raise FileNotFoundError('No hay chats en la ruta del archivo.')
+        
         lines = fp.readlines()
         
         message_buffer = []
@@ -36,6 +40,8 @@ class Chat :
                 message_buffer.append(message)
             else:
                 message_buffer.append(line)
+
+        fp.close()
 
         chat = pd.DataFrame(parsed_data, columns=['Date_Time', 'Author', 'Message'])
 

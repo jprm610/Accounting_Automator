@@ -20,7 +20,7 @@ def main() -> None :
 
     # Get chat dataframe
     print('Cargando chat...')
-    chat = Chat(chat_path=Parameters.CHAT_PATH)
+    chat = Chat(chat_path=Parameters.INPUT_PATH)
     chat_df = chat.getChat_df()
 
     # Get transactions dataframe
