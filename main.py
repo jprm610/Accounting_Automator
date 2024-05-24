@@ -41,7 +41,7 @@ def main() -> None :
     Debt.main()
 
     print('Proceso finalizado con exito.')
-    
+
     return
 
 main()

@@ -69,4 +69,4 @@ class Transaction :
         """
 
         # Return the sum of the numbers in the description
-        return sum([int(x) for x in description.split() if x.isnumeric()])
+        return sum([int(x) for x in description.split() if x.isnumeric() and int(x) >= 1000])
