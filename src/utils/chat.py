@@ -1,5 +1,6 @@
 from pathlib import Path
 import pandas as pd
+from parameters import Parameters
 
 class Chat :
     def __init__(self, chat_path: Path) -> None :
@@ -77,13 +78,14 @@ class Chat :
 
         import re
 
-        pattern = "^\d{1,2}/\d{1,2}/\d{2,4}, \d{1,2}:\d{1,2}\S [AaPp][Mm] -"
+        if Parameters.LANGUAGE == 'ES' :
+            pattern = "^\d{1,2}/\d{1,2}/\d{2,4}, \d{1,2}:\d{1,2}\S [AaPp][Mm] -"
+        elif Parameters.LANGUAGE == 'FR' :
+            pattern = "^\d{1,2}/\d{1,2}/\d{2,4}, \d{1,2}:\d{1,2} -"
+
         result = re.match(pattern, s)
 
-        if result :
-            return True
-
-        return False
+        return bool(result)
     
     @classmethod
     def Get_Data_Point(cls, line) -> tuple :
@@ -104,11 +106,38 @@ class Chat :
         return date_time, author, message
 
     @classmethod
-    def Find_Author(cls, s) -> bool :
+    def Find_Author(cls, s) -> bool:
         """
-        @s: String to check if it contains an author. \\
+        @s: String to check if it contains an author.
         Returns True if the string contains an author, False otherwise.
         """
+
+        import re
+
+        # Patterns to match different author name formats
+        patterns = [
+            "([\w]+):",                      # First name only
+            "([\w]+[\s]+[\w]+):",            # First name + Last name
+            "([\w]+[\s]+[\w]+[\s]+[\w]+):",  # First name + Middle name + Last name
+            "([\w]+[\s]+[\w]+[\s]+[\w]+[\s]+[\w]+):" # First name + Middle name + Last name + Suffix
+        ]
+
+        # Combine the patterns into one
+        pattern = '^' + '|'.join(patterns)
+
+        # Check if the string matches any of the patterns
+        result = re.match(pattern, s)
+        #result = re.match(pattern, s.strip().split('-')[1].strip() if '-' in s else s)
+
+        return bool(result)
+
+    """
+    @classmethod
+    def Find_Author(cls, s) -> bool :
+        
+        @s: String to check if it contains an author. \\
+        Returns True if the string contains an author, False otherwise.
+        
 
         import re
 
@@ -121,8 +150,4 @@ class Chat :
         pattern = '^' + '|'.join(patterns)
 
         result = re.match(pattern, s)
-
-        if result :
-            return True
-
-        return False
+    """

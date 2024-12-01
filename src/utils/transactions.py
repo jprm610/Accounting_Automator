@@ -58,6 +58,8 @@ class Transactions :
     
     @classmethod
     def normalize(cls, s:str) -> str :
+        import regex as re
+
         """
         @s: String to normalize. \\
         Returns the normalized string.
@@ -74,7 +76,9 @@ class Transactions :
         s = s.upper()
         for a, b in replacements:
             s = s.replace(a, b).replace(a.upper(), b.upper())
+        s = re.sub('\s+', ' ', s)
         s = s.replace("<SE EDITO ESTE MENSAJE.>", '')
+        s = s.replace("<CE MESSAGE A ETE MODIFIE>", '')
         s = s.strip()
 
         return s
