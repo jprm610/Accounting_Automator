@@ -1,5 +1,6 @@
 import pandas as pd
 from parameters import Parameters
+from pathlib import Path
 
 class Debt :
     # Class attributes
@@ -162,8 +163,8 @@ class Debt :
         # Create a dataframe with the debts and export it
         debts = pd.DataFrame([debt.__dict__ for debt in Debt.DEBTS])
         debts.columns = ['DEUDOR', 'ACREEDOR', 'VALOR']
-        debts.to_csv(Parameters.EXPORT_PATH / 'CRUCE CUENTAS.csv', index=False)
-        Debt.DEBTS_DF.to_csv(Parameters.EXPORT_PATH / 'DEUDAS.csv', index=False)
+        debts.to_csv(Parameters.EXPORT_PATH / Path('CRUCE CUENTAS.csv'), index=False)
+        Debt.DEBTS_DF.to_csv(Parameters.EXPORT_PATH / Path('DEUDAS.csv'), index=False)
         print('Se exportó la deuda.')
 
         return

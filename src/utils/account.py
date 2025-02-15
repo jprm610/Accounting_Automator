@@ -72,7 +72,7 @@ class Account :
 
         # Export the account's transactions if there are transactions
         if len(self.getTransactions()) > 0 :
-            self.getTransactions().to_csv(Parameters.EXPORT_PATH / f'{self.name} {Parameters.YEAR} {Parameters.MONTH}.csv', index=False)
+            self.getTransactions().to_csv(Parameters.EXPORT_PATH / Path(f'{self.name} {Parameters.YEAR} {Parameters.MONTH}.csv'), index=False)
             print(f'Se exportó {self.name}.')
         
         return
